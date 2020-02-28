@@ -7,19 +7,11 @@ defmodule PhoenixControllerPlugGuardGenBugWeb.PageController do
   #  plug(AuthPlug, [param: "tenko", password: "tenko_secret"] when action == :tenko)
   #  plug(AuthPlug, [param: "cofe", password: "cofe_secret"] when action == :cofe)
 
-
   for authenticated_action <- [:tenko, :cofe] do
-    param = to_string(authenticated_action)
-    password = param <> "_secret"
+    @authenticated_action to_string(authenticated_action)
+    @password @authenticated_action <> "_secret"
 
-    # This doesn't
-    # plug(AuthPlug, [param: param, password: password] when action == authenticated_action)
-
-    # This also doesn't 
-    plug(
-      AuthPlug,
-      [param: param, password: password] when action == unquote(authenticated_action)
-    )
+    plug AuthPlug, [password: @password] when action == @authenticated_action
   end
 
   def index(conn, _params) do
